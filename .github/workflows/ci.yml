@@ -20,6 +20,11 @@ jobs:
         run: python scripts/governance_audit.py examples/minimal-project --format markdown
       - name: Doctor smoke test
         run: python scripts/mpmg.py doctor examples/minimal-project
+      - name: Before/after demo smoke test
+        run: |
+          ! python scripts/mpmg.py doctor examples/agent-chaos-before-after/before
+          python scripts/mpmg.py doctor examples/agent-chaos-before-after/after
+          python scripts/mpmg.py validate-artifacts examples/agent-chaos-before-after/after
       - name: Handoff cleanup planner smoke test
         run: python scripts/mpmg.py plan-handoff-cleanup examples/multi-agent-review --format markdown
       - name: Artifact metadata validation

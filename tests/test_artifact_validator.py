@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts import validate_artifacts
+from scripts import doctor, validate_artifacts
 
 
 class ArtifactValidatorTests(unittest.TestCase):
@@ -13,6 +13,13 @@ class ArtifactValidatorTests(unittest.TestCase):
         report = validate_artifacts.validate(root)
         self.assertTrue(report["passed"])
         self.assertGreaterEqual(report["artifacts_checked"], 2)
+
+    def test_before_after_demo_doctor_contrast(self) -> None:
+        before = doctor.doctor(Path("examples/agent-chaos-before-after/before"))
+        after = doctor.doctor(Path("examples/agent-chaos-before-after/after"))
+        self.assertFalse(before["passed"])
+        self.assertTrue(after["passed"])
+        self.assertTrue(any(check["name"] == "artifact_metadata" for check in after["checks"]))
 
     def test_missing_review_identity_fails(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

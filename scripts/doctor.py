@@ -12,11 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import governance_audit
+from scripts import governance_audit, validate_artifacts
 
 
 def doctor(root: Path) -> dict:
     audit = governance_audit.audit(root)
+    artifact_report = validate_artifacts.validate(root)
     checks = []
     checks.append({"name": "python_version", "passed": sys.version_info >= (3, 9), "detail": sys.version.split()[0]})
     checks.append({"name": "git_available", "passed": shutil.which("git") is not None, "detail": shutil.which("git") or "not found"})
@@ -24,7 +25,10 @@ def doctor(root: Path) -> dict:
     checks.append({"name": "public_safety", "passed": audit["public_safety_passed"], "detail": audit["public_safety_output"]})
     checks.append({"name": "worker_tasks_dir", "passed": (root / "handoff" / "worker_tasks").exists(), "detail": "handoff/worker_tasks"})
     checks.append({"name": "reviews_dir", "passed": (root / "handoff" / "reviews").exists(), "detail": "handoff/reviews"})
-    return {"root": str(root), "passed": all(c["passed"] for c in checks), "checks": checks, "audit_recommendations": audit["recommendations"]}
+    checks.append({"name": "artifact_metadata", "passed": artifact_report["passed"], "detail": f"{artifact_report['artifacts_checked']} artifacts checked"})
+    recommendations = list(audit["recommendations"])
+    recommendations.extend(r for r in artifact_report["recommendations"] if r not in recommendations)
+    return {"root": str(root), "passed": all(c["passed"] for c in checks), "checks": checks, "audit_recommendations": recommendations}
 
 
 def to_markdown(report: dict) -> str:

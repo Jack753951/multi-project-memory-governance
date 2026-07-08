@@ -1,21 +1,41 @@
-# Multi-Project Memory Governance for AI Agents
+# Stop AI Agents from Mixing Up Your Projects
 
 [![CI](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml)
 
 
-Prevent AI-agent memory contamination across multi-repo workflows.
+AI coding agents eventually remember the wrong things. They apply rules from another repo, trust stale chat history over live files, ask workers to review without required context, and leave review artifacts with no model/tool/limitation metadata.
 
-This is a practical governance kit for people using Hermes, Claude Code, Codex, local subagents, Obsidian/project notes, and repo-local handoff files across several projects. It turns hard-won multi-agent workflow lessons into reusable docs, templates, scripts, and a portable skill.
+This is a project-hygiene and authority-boundary kit for long-running AI-assisted development with Claude Code, Codex, Cursor, Hermes, local subagents, `AGENTS.md` / `CLAUDE.md`, Obsidian/project notes, and repo-local handoff files.
 
-## Problem
+It is not a memory database. It helps each project say which layer is allowed to be truth, what external workers must read, how reviews should identify themselves, and how to public-export private workflows without leaking local details.
 
-AI assistants increasingly work across many repos. If one global memory store becomes the project database, projects start to leak into each other:
+## The problem
+
+AI assistants increasingly work across many repos. If global memory, chat history, and handoff files blur together, projects start to leak into each other:
 
 - stale phase logs and run artifacts bias future sessions;
 - security gates from one workspace over-constrain harmless local experiments elsewhere;
 - creative preferences leak into engineering or security work;
 - external workers assume they inherited context they never saw;
-- handoff folders become unreadable dumping grounds.
+- handoff folders become unreadable dumping grounds;
+- reviews omit which tool/model/limitations produced them;
+- private local paths or account details sneak into public exports.
+
+Run the doctor first:
+
+```bash
+python scripts/mpmg.py doctor /path/to/your/project
+```
+
+Then inspect a concrete before/after demo:
+
+```bash
+python scripts/mpmg.py doctor examples/agent-chaos-before-after/before || true
+python scripts/mpmg.py doctor examples/agent-chaos-before-after/after
+python scripts/mpmg.py validate-artifacts examples/agent-chaos-before-after/after
+```
+
+See `docs/before-after-demo.md` for the walkthrough.
 
 ## Core model
 
@@ -35,6 +55,7 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/handoff-index-policy.md` — how to keep `handoff/` useful instead of a dumping ground.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
 - `docs/quickstart.md` — five-minute guided path.
+- `docs/before-after-demo.md` — concrete messy-project demo for the core pain point.
 - `docs/adoption-matrix.md` — choose the right governance weight for each project type.
 - `docs/adoption-guide.md` — step-by-step adoption guide.
 - `docs/release-checklist.md` — release verification checklist.
@@ -42,6 +63,7 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/tooling.md` — command reference for the included tools.
 - `templates/` — copy-paste project files for context, handoff governance, active queues, reviews, and worker tasks.
 - `examples/minimal-project/` — synthetic governed project layout.
+- `examples/agent-chaos-before-after/` — messy-to-governed demo that shows the pain quickly.
 - `examples/multi-agent-review/` — synthetic coordinator/worker/reviewer handoff flow.
 - `examples/public-export/` — synthetic sanitized export workflow.
 - `skills/note-taking/multi-project-memory-routing/SKILL.md` — portable Hermes-style skill.

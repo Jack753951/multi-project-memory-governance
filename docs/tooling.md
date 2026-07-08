@@ -79,7 +79,7 @@ python scripts/mpmg.py export-public --output /tmp/mpmg-export --force
 
 ## `scripts/doctor.py`
 
-Check Python, git availability, governance validation, public safety, and common handoff directories.
+Check Python, git availability, governance validation, public safety, common handoff directories, and worker/review artifact metadata. Use this as the first diagnostic command when an AI-agent project starts to feel context-drifted.
 
 ## `scripts/plan_handoff_cleanup.py`
 

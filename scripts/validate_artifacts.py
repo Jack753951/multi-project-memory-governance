@@ -52,7 +52,7 @@ def validate(root: Path) -> dict:
     failures = [item for item in results if not item["passed"]]
     if failures:
         recommendations.append("Patch failing artifacts before using them as future worker context or review evidence.")
-    else:
+    elif results:
         recommendations.append("Artifact metadata checks passed.")
     return {"root": str(root), "passed": not failures, "artifacts_checked": len(results), "results": results, "recommendations": recommendations}
 

@@ -2,7 +2,15 @@
 
 All notable changes are documented here. This project uses human-readable versions while it is still pre-1.0.
 
-## 0.3.0 - Unreleased
+## 0.4.0 - Unreleased
+
+### Added
+
+- Pain-point-oriented README positioning for AI agents mixing up projects.
+- Before/after demo showing a messy AI-agent project and a governed project.
+- Doctor integration with artifact metadata validation.
+
+## 0.3.0 - 2026-07-08
 
 ### Added
 
@@ -12,6 +20,8 @@ All notable changes are documented here. This project uses human-readable versio
 - Synthetic multi-agent review example.
 - Synthetic public-export workflow example.
 - Roadmap and changelog.
+- Adoption matrix, release checklist, and release notes.
+- Artifact validator for worker task and review metadata.
 
 ## 0.2.0 - 2026-07-08
 
