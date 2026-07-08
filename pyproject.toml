@@ -1,12 +1,29 @@
 [project]
 name = "multi-project-memory-governance"
 version = "0.3.0"
-description = "Governance kit for preventing AI-agent memory contamination across multi-repo workflows."
+description = "AI coding agent context hygiene kit for preventing project mixups, memory contamination, stale handoffs, and missing review metadata."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Hermes Agent community" }]
-keywords = ["ai-agents", "memory", "handoff", "obsidian", "governance", "codex", "claude"]
+keywords = [
+  "ai-agents",
+  "ai-coding-agents",
+  "context-hygiene",
+  "agent-memory",
+  "memory-governance",
+  "agent-project-hygiene",
+  "handoff",
+  "worker-tasks",
+  "review-metadata",
+  "agents-md",
+  "claude-code",
+  "codex",
+  "cursor",
+  "public-export-safety",
+  "obsidian",
+  "governance",
+]
 
 [project.urls]
 Homepage = "https://github.com/Jack753951/multi-project-memory-governance"

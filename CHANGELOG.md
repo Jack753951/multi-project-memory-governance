@@ -9,6 +9,8 @@ All notable changes are documented here. This project uses human-readable versio
 - Pain-point-oriented README positioning for AI agents mixing up projects.
 - Before/after demo showing a messy AI-agent project and a governed project.
 - Doctor integration with artifact metadata validation.
+- Related-work and keyword positioning page for GitHub discoverability.
+- Search-oriented package description and keywords for AI coding agent context hygiene.
 
 ## 0.3.0 - 2026-07-08
 

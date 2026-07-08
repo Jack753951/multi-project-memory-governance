@@ -5,9 +5,11 @@
 
 AI coding agents eventually remember the wrong things. They apply rules from another repo, trust stale chat history over live files, ask workers to review without required context, and leave review artifacts with no model/tool/limitation metadata.
 
-This is a project-hygiene and authority-boundary kit for long-running AI-assisted development with Claude Code, Codex, Cursor, Hermes, local subagents, `AGENTS.md` / `CLAUDE.md`, Obsidian/project notes, and repo-local handoff files.
+This is a project-hygiene, context-hygiene, and authority-boundary kit for long-running AI-assisted development with Claude Code, Codex, Cursor, Hermes, local subagents, `AGENTS.md` / `CLAUDE.md`, Obsidian/project notes, and repo-local handoff files.
 
 It is not a memory database. It helps each project say which layer is allowed to be truth, what external workers must read, how reviews should identify themselves, and how to public-export private workflows without leaking local details.
+
+Search phrases this project is designed around: AI coding agent context hygiene, AI agent project hygiene, repo-local memory governance, AGENTS.md context rot, Claude Code handoff, Codex handoff, worker task brief validation, AI review metadata, public export safety for AI workflows, and authority boundaries for long-running AI coding agents.
 
 ## The problem
 
@@ -56,6 +58,7 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
 - `docs/quickstart.md` — five-minute guided path.
 - `docs/before-after-demo.md` — concrete messy-project demo for the core pain point.
+- `docs/related-work.md` — similar GitHub project categories, search phrases, and differentiation.
 - `docs/adoption-matrix.md` — choose the right governance weight for each project type.
 - `docs/adoption-guide.md` — step-by-step adoption guide.
 - `docs/release-checklist.md` — release verification checklist.
@@ -131,6 +134,12 @@ Use it if you:
 - need a safe public-export discipline for private agent workflows.
 
 Do not use it as a substitute for secrets management, legal/compliance review, or domain-specific safety policy.
+
+## Related work and search positioning
+
+This project overlaps with agent memory layers, Claude/Codex handoff tools, AGENTS.md/context hygiene tools, agent workflow governance, and multi-agent collaboration systems. Its differentiator is the repo-local boundary between those layers: which context is truth, what global memory must not store, what workers must read, what review artifacts must disclose, and how private AI-agent workflows are safely exported.
+
+See `docs/related-work.md` for the detailed comparison and keyword map.
 
 ## Public-safety note
 
