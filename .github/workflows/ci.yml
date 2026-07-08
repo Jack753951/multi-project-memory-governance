@@ -22,6 +22,8 @@ jobs:
         run: python scripts/mpmg.py doctor examples/minimal-project
       - name: Handoff cleanup planner smoke test
         run: python scripts/mpmg.py plan-handoff-cleanup examples/multi-agent-review --format markdown
+      - name: Artifact metadata validation
+        run: python scripts/mpmg.py validate-artifacts examples/multi-agent-review
       - name: Public export smoke test
         run: python scripts/export_public_subset.py --output /tmp/mpmg-export --force
       - name: Public safety scan

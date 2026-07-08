@@ -18,6 +18,7 @@ from scripts import (
     init_governance,
     new_worker_task,
     plan_handoff_cleanup,
+    validate_artifacts,
     validate_governance,
 )
 
@@ -35,6 +36,10 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("validate", help="Validate governance layout")
     p.add_argument("target", nargs="?", default=".")
+
+    p = sub.add_parser("validate-artifacts", help="Validate worker task and review artifact metadata")
+    p.add_argument("target", nargs="?", default=".")
+    p.add_argument("--format", choices=["markdown", "json"], default="markdown")
 
     p = sub.add_parser("audit", help="Run validation and public-safety checks")
     p.add_argument("target", nargs="?", default=".")
@@ -75,6 +80,8 @@ def main(argv: list[str] | None = None) -> int:
         return init_governance.main(["--target", args.target, "--project-name", args.project_name, "--notes-namespace", args.notes_namespace, "--context-file", args.context_file] + (["--force"] if args.force else []))
     if args.command == "validate":
         return validate_governance.main([args.target])
+    if args.command == "validate-artifacts":
+        return validate_artifacts.main([args.target, "--format", args.format])
     if args.command == "audit":
         return governance_audit.main([args.target, "--format", args.format])
     if args.command == "safety-scan":

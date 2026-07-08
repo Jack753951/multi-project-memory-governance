@@ -71,6 +71,7 @@ python scripts/mpmg.py init --target /path/to/project --project-name MyProject -
 python scripts/mpmg.py validate /path/to/project
 python scripts/mpmg.py audit /path/to/project --format markdown
 python scripts/mpmg.py doctor /path/to/project
+python scripts/mpmg.py validate-artifacts /path/to/project
 python scripts/mpmg.py worker-task --target /path/to/project --name review-routing --task "Review routing" --scope handoff/
 python scripts/mpmg.py plan-handoff-cleanup /path/to/project --format markdown
 python scripts/mpmg.py export-public --output /tmp/mpmg-export --force
@@ -83,3 +84,7 @@ Check Python, git availability, governance validation, public safety, and common
 ## `scripts/plan_handoff_cleanup.py`
 
 Inventory a handoff directory and suggest destinations. It does not move files; use it to create a human-reviewed cleanup plan.
+
+## `scripts/validate_artifacts.py`
+
+Validate that worker task briefs include task, required reads, scope, disallowed actions, expected output, and validation sections; validate that review artifacts include reviewer identity metadata.

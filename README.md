@@ -35,7 +35,9 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/handoff-index-policy.md` — how to keep `handoff/` useful instead of a dumping ground.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
 - `docs/quickstart.md` — five-minute guided path.
+- `docs/adoption-matrix.md` — choose the right governance weight for each project type.
 - `docs/adoption-guide.md` — step-by-step adoption guide.
+- `docs/release-checklist.md` — release verification checklist.
 - `docs/field-guide-from-practice.md` — sanitized summary of project lessons that shaped the kit.
 - `docs/tooling.md` — command reference for the included tools.
 - `templates/` — copy-paste project files for context, handoff governance, active queues, reviews, and worker tasks.
@@ -52,6 +54,7 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `scripts/export_public_subset.py` — produce a sanitized public subset export.
 - `scripts/doctor.py` — check local environment and governance health.
 - `scripts/plan_handoff_cleanup.py` — inventory `handoff/` and suggest cleanup destinations without moving files.
+- `scripts/validate_artifacts.py` — validate worker task and review artifact metadata.
 - `ROADMAP.md` and `CHANGELOG.md` — project direction and release history.
 - `.github/workflows/ci.yml` — CI for tests, example validation, and public safety scan.
 
