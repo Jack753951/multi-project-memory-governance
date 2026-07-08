@@ -32,12 +32,17 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/handoff-index-policy.md` — how to keep `handoff/` useful instead of a dumping ground.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
 - `docs/adoption-guide.md` — step-by-step adoption guide.
+- `docs/field-guide-from-practice.md` — sanitized summary of project lessons that shaped the kit.
+- `docs/tooling.md` — command reference for the included tools.
 - `templates/` — copy-paste project files for context, handoff governance, active queues, reviews, and worker tasks.
 - `examples/minimal-project/` — synthetic governed project layout.
 - `skills/note-taking/multi-project-memory-routing/SKILL.md` — portable Hermes-style skill.
 - `scripts/init_governance.py` — bootstrap governance files into a repo.
 - `scripts/validate_governance.py` — validate a governed project layout.
 - `scripts/check_public_safety.py` — scan for obvious private path/token patterns before publishing.
+- `scripts/governance_audit.py` — one-command validate + public-safety audit.
+- `scripts/new_worker_task.py` — generate bounded worker task briefs.
+- `scripts/export_public_subset.py` — produce a sanitized public subset export.
 - `.github/workflows/ci.yml` — CI for tests, example validation, and public safety scan.
 
 ## Quick start
@@ -58,6 +63,7 @@ Validate:
 ```bash
 python scripts/validate_governance.py /path/to/your/project
 python scripts/check_public_safety.py /path/to/your/project
+python scripts/governance_audit.py /path/to/your/project --format markdown
 ```
 
 Try the included example:

@@ -17,6 +17,9 @@ Issues = "https://github.com/Jack753951/multi-project-memory-governance/issues"
 mpmg-init = "scripts.init_governance:main"
 mpmg-validate = "scripts.validate_governance:main"
 mpmg-safety-scan = "scripts.check_public_safety:main"
+mpmg-export-public = "scripts.export_public_subset:main"
+mpmg-worker-task = "scripts.new_worker_task:main"
+mpmg-audit = "scripts.governance_audit:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

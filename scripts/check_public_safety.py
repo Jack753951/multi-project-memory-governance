@@ -27,8 +27,7 @@ def is_text_candidate(path: Path) -> bool:
     return path.name in {"LICENSE", "README"} or path.suffix.lower() in TEXT_EXTS
 
 
-def main() -> int:
-    root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
+def scan(root: Path):
     findings = []
     for path in root.rglob("*"):
         if any(part in SKIP_DIRS for part in path.parts):
@@ -46,6 +45,11 @@ def main() -> int:
                 if pattern.search(line):
                     findings.append((path, line_no, name, line.strip()[:160]))
 
+    return findings
+
+
+def main_for_path(root: Path) -> int:
+    findings = scan(root)
     if findings:
         print("Potential public-safety findings:")
         for path, line_no, name, snippet in findings:
@@ -53,6 +57,11 @@ def main() -> int:
         return 1
     print("No obvious private path/token patterns found.")
     return 0
+
+
+def main() -> int:
+    root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
+    return main_for_path(root)
 
 
 if __name__ == "__main__":
