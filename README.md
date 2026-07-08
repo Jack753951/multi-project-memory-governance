@@ -1,10 +1,20 @@
 # Multi-Project Memory Governance for AI Agents
 
-A sanitized, open-source governance kit for running several AI-agent projects without turning one global memory store into a project database.
+Prevent AI-agent memory contamination across multi-repo workflows.
 
-This repository distills patterns from multiple real agent-coordinated projects, with private paths, accounts, target names, credentials, run logs, and project-specific strategy removed. It is meant to be copied into your own repos and adapted.
+This is a practical governance kit for people using Hermes, Claude Code, Codex, local subagents, Obsidian/project notes, and repo-local handoff files across several projects. It turns hard-won multi-agent workflow lessons into reusable docs, templates, scripts, and a portable skill.
 
-## Core idea
+## Problem
+
+AI assistants increasingly work across many repos. If one global memory store becomes the project database, projects start to leak into each other:
+
+- stale phase logs and run artifacts bias future sessions;
+- security gates from one workspace over-constrain harmless local experiments elsewhere;
+- creative preferences leak into engineering or security work;
+- external workers assume they inherited context they never saw;
+- handoff folders become unreadable dumping grounds.
+
+## Core model
 
 ```text
 Global agent memory = compact cross-project signposts and user preferences.
@@ -14,36 +24,47 @@ Skills = reusable procedures and judgment criteria, not project databases.
 Session search = recall leads that must be verified before use.
 ```
 
-## Why this exists
+See `docs/architecture.md` for the diagram and layer contract.
 
-When one AI agent profile helps with several projects, durable memory can accidentally leak assumptions across domains. Examples:
-
-- a creative/content preference biases a security workspace;
-- a strict safety gate from a high-risk project over-constrains harmless local experiments;
-- stale commit IDs, phase logs, or run artifacts remain in global memory;
-- external workers assume they inherited context they never actually saw.
-
-This kit provides a layered policy so future agents know where to read and where to write.
-
-## Repository contents
+## What is included
 
 - `docs/memory-governance-policy.md` — source-of-truth policy and routing matrix.
 - `docs/handoff-index-policy.md` — how to keep `handoff/` useful instead of a dumping ground.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
-- `templates/` — copy-paste project files for `.hermes.md`, handoff governance, active queues, reviews, and worker tasks.
-- `skills/note-taking/multi-project-memory-routing/SKILL.md` — a portable Hermes-style skill distilled from the policy.
-- `scripts/check_public_safety.py` — simple scan for obvious private path/token patterns before publishing.
+- `docs/adoption-guide.md` — step-by-step adoption guide.
+- `templates/` — copy-paste project files for context, handoff governance, active queues, reviews, and worker tasks.
+- `examples/minimal-project/` — synthetic governed project layout.
+- `skills/note-taking/multi-project-memory-routing/SKILL.md` — portable Hermes-style skill.
+- `scripts/init_governance.py` — bootstrap governance files into a repo.
+- `scripts/validate_governance.py` — validate a governed project layout.
+- `scripts/check_public_safety.py` — scan for obvious private path/token patterns before publishing.
+- `.github/workflows/ci.yml` — CI for tests, example validation, and public safety scan.
 
 ## Quick start
 
-1. Copy `templates/handoff-memory-governance.md` into your project, usually as `handoff/memory_governance.md`.
-2. Copy `templates/active-strategy-queue.md` into `handoff/active_strategy_queue.md`.
-3. Add the required-read block from `templates/project-context-snippet.md` to `.hermes.md`, `AGENTS.md`, or `CLAUDE.md`.
-4. If external workers are used, give them `templates/worker-task.md` and require explicit context reads.
-5. Run:
+Clone this repo, then initialize governance in another project:
 
 ```bash
-python scripts/check_public_safety.py .
+python scripts/init_governance.py \
+  --target /path/to/your/project \
+  --project-name MyProject \
+  --notes-namespace notes/Projects/MyProject
+```
+
+If the context file does not exist, the initializer creates `.hermes.md`. If your project already has `.hermes.md`, `AGENTS.md`, `CLAUDE.md`, or another agent context file, merge `templates/project-context-snippet.md` into the existing file.
+
+Validate:
+
+```bash
+python scripts/validate_governance.py /path/to/your/project
+python scripts/check_public_safety.py /path/to/your/project
+```
+
+Try the included example:
+
+```bash
+python scripts/validate_governance.py examples/minimal-project
+python -m unittest discover -s tests
 ```
 
 ## Authority order
@@ -57,9 +78,29 @@ When layers disagree:
 5. global durable agent memory for compact pointers and preferences;
 6. session search only as recall, verified before use.
 
+## Who should use this
+
+Use it if you:
+
+- run one AI assistant profile across multiple repos;
+- use external coding/review agents that need explicit context boundaries;
+- maintain Obsidian or Markdown project notes alongside code;
+- want repo-local handoff files to stay readable;
+- need a safe public-export discipline for private agent workflows.
+
+Do not use it as a substitute for secrets management, legal/compliance review, or domain-specific safety policy.
+
 ## Public-safety note
 
-The examples intentionally use placeholders such as `<project-root>`, `<project-name>`, `<obsidian-project-namespace>`, and `<worker-tool>`. Do not replace them with private local paths, tokens, target details, raw scan output, account data, or client-sensitive evidence in a public fork.
+The examples intentionally use placeholders such as `<project-root>`, `<project-name>`, `<project-notes-namespace>`, and `<worker-tool>`. Do not replace them with private local paths, tokens, target details, raw scan output, account data, or client-sensitive evidence in a public fork.
+
+## Development
+
+```bash
+python -m unittest discover -s tests
+python scripts/validate_governance.py examples/minimal-project
+python scripts/check_public_safety.py .
+```
 
 ## License
 

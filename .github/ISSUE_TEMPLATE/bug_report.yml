@@ -1,0 +1,15 @@
+name: Bug report
+description: Report a problem with scripts, templates, or docs.
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Do not include secrets, private paths, target names, or raw logs.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Use placeholders for private project details.

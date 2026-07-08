@@ -1,0 +1,23 @@
+[project]
+name = "multi-project-memory-governance"
+version = "0.2.0"
+description = "Governance kit for preventing AI-agent memory contamination across multi-repo workflows."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Hermes Agent community" }]
+keywords = ["ai-agents", "memory", "handoff", "obsidian", "governance", "codex", "claude"]
+
+[project.urls]
+Homepage = "https://github.com/Jack753951/multi-project-memory-governance"
+Repository = "https://github.com/Jack753951/multi-project-memory-governance"
+Issues = "https://github.com/Jack753951/multi-project-memory-governance/issues"
+
+[project.scripts]
+mpmg-init = "scripts.init_governance:main"
+mpmg-validate = "scripts.validate_governance:main"
+mpmg-safety-scan = "scripts.check_public_safety:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

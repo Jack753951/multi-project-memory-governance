@@ -1,0 +1,15 @@
+name: Policy improvement
+description: Suggest a reusable governance pattern.
+body:
+  - type: textarea
+    id: pattern
+    attributes:
+      label: Pattern
+      description: Describe the reusable process. Do not include private project state.
+    validations:
+      required: true
+  - type: textarea
+    id: destination
+    attributes:
+      label: Suggested destination
+      description: docs, templates, scripts, skill, or example.
