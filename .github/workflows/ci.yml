@@ -18,6 +18,10 @@ jobs:
         run: python scripts/validate_governance.py examples/minimal-project
       - name: Governance audit
         run: python scripts/governance_audit.py examples/minimal-project --format markdown
+      - name: Doctor smoke test
+        run: python scripts/mpmg.py doctor examples/minimal-project
+      - name: Handoff cleanup planner smoke test
+        run: python scripts/mpmg.py plan-handoff-cleanup examples/multi-agent-review --format markdown
       - name: Public export smoke test
         run: python scripts/export_public_subset.py --output /tmp/mpmg-export --force
       - name: Public safety scan

@@ -1,5 +1,8 @@
 # Multi-Project Memory Governance for AI Agents
 
+[![CI](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml)
+
+
 Prevent AI-agent memory contamination across multi-repo workflows.
 
 This is a practical governance kit for people using Hermes, Claude Code, Codex, local subagents, Obsidian/project notes, and repo-local handoff files across several projects. It turns hard-won multi-agent workflow lessons into reusable docs, templates, scripts, and a portable skill.
@@ -31,18 +34,25 @@ See `docs/architecture.md` for the diagram and layer contract.
 - `docs/memory-governance-policy.md` — source-of-truth policy and routing matrix.
 - `docs/handoff-index-policy.md` — how to keep `handoff/` useful instead of a dumping ground.
 - `docs/agent-collaboration-policy.md` — coordinator/worker/reviewer contracts.
+- `docs/quickstart.md` — five-minute guided path.
 - `docs/adoption-guide.md` — step-by-step adoption guide.
 - `docs/field-guide-from-practice.md` — sanitized summary of project lessons that shaped the kit.
 - `docs/tooling.md` — command reference for the included tools.
 - `templates/` — copy-paste project files for context, handoff governance, active queues, reviews, and worker tasks.
 - `examples/minimal-project/` — synthetic governed project layout.
+- `examples/multi-agent-review/` — synthetic coordinator/worker/reviewer handoff flow.
+- `examples/public-export/` — synthetic sanitized export workflow.
 - `skills/note-taking/multi-project-memory-routing/SKILL.md` — portable Hermes-style skill.
+- `scripts/mpmg.py` — unified CLI for init, validate, audit, doctor, worker-task, export, and cleanup planning.
 - `scripts/init_governance.py` — bootstrap governance files into a repo.
 - `scripts/validate_governance.py` — validate a governed project layout.
 - `scripts/check_public_safety.py` — scan for obvious private path/token patterns before publishing.
 - `scripts/governance_audit.py` — one-command validate + public-safety audit.
 - `scripts/new_worker_task.py` — generate bounded worker task briefs.
 - `scripts/export_public_subset.py` — produce a sanitized public subset export.
+- `scripts/doctor.py` — check local environment and governance health.
+- `scripts/plan_handoff_cleanup.py` — inventory `handoff/` and suggest cleanup destinations without moving files.
+- `ROADMAP.md` and `CHANGELOG.md` — project direction and release history.
 - `.github/workflows/ci.yml` — CI for tests, example validation, and public safety scan.
 
 ## Quick start
@@ -50,7 +60,7 @@ See `docs/architecture.md` for the diagram and layer contract.
 Clone this repo, then initialize governance in another project:
 
 ```bash
-python scripts/init_governance.py \
+python scripts/mpmg.py init \
   --target /path/to/your/project \
   --project-name MyProject \
   --notes-namespace notes/Projects/MyProject
@@ -61,9 +71,10 @@ If the context file does not exist, the initializer creates `.hermes.md`. If you
 Validate:
 
 ```bash
-python scripts/validate_governance.py /path/to/your/project
-python scripts/check_public_safety.py /path/to/your/project
-python scripts/governance_audit.py /path/to/your/project --format markdown
+python scripts/mpmg.py validate /path/to/your/project
+python scripts/mpmg.py safety-scan /path/to/your/project
+python scripts/mpmg.py audit /path/to/your/project --format markdown
+python scripts/mpmg.py doctor /path/to/your/project
 ```
 
 Try the included example:

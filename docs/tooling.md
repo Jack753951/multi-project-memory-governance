@@ -60,3 +60,26 @@ python scripts/export_public_subset.py --output /tmp/memory-governance-export
 ```
 
 Use this when adapting a private governance substrate into a public teaching repo.
+
+
+## Unified CLI
+
+All helpers are also available through one command:
+
+```bash
+python scripts/mpmg.py init --target /path/to/project --project-name MyProject --notes-namespace notes/Projects/MyProject
+python scripts/mpmg.py validate /path/to/project
+python scripts/mpmg.py audit /path/to/project --format markdown
+python scripts/mpmg.py doctor /path/to/project
+python scripts/mpmg.py worker-task --target /path/to/project --name review-routing --task "Review routing" --scope handoff/
+python scripts/mpmg.py plan-handoff-cleanup /path/to/project --format markdown
+python scripts/mpmg.py export-public --output /tmp/mpmg-export --force
+```
+
+## `scripts/doctor.py`
+
+Check Python, git availability, governance validation, public safety, and common handoff directories.
+
+## `scripts/plan_handoff_cleanup.py`
+
+Inventory a handoff directory and suggest destinations. It does not move files; use it to create a human-reviewed cleanup plan.
