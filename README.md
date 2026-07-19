@@ -15,7 +15,7 @@ Multi-Project Memory Governance (MPMG) is a small, filesystem-native **authority
 
 > **Core rule:** every important question should have a named authority. Task scope, observed state, intended behavior, accepted work state, and long-term rationale may legitimately have different owners.
 
-This prevents concrete failures such as:
+This helps expose and reduce failures such as:
 
 - an agent applying rules or phase state from another repository;
 - stale chat history overruling current code and validation output;
@@ -23,7 +23,7 @@ This prevents concrete failures such as:
 - a Claude Code, Codex, Cursor, Hermes, or local worker acting without the project context it was expected to read;
 - handoff and review artifacts losing their source, validation, or limitation metadata.
 
-This is not a memory database, agent runtime, or replacement for `AGENTS.md`, `CLAUDE.md`, Cline Memory Bank, Sopify, Spec Kit, OpenSpec, Ruler, or runtime policy. Those tools keep their jobs. MPMG only maps which system owns which kind of truth, where freshness must be checked, and what an external worker must read.
+This is not a memory database, agent runtime, or replacement for `AGENTS.md`, `CLAUDE.md`, Cline Memory Bank, Sopify, Spec Kit, OpenSpec, Ruler, or runtime policy. Those tools keep their jobs. The default thin-overlay path only maps which system owns which question, where freshness must be checked, and what an external worker must read. Optional full-kit commands can add a handoff and validation layout when a project explicitly needs one.
 
 ## Start with the thin overlay
 
@@ -69,7 +69,7 @@ See `docs/before-after-demo.md` for the walkthrough.
 | Question | Primary authority |
 |---|---|
 | What should the agent do now? | Current explicit user/operator instruction for task and scope |
-| What is happening now? | Live files, configuration, and fresh validation evidence |
+| What is happening now? | Direct observation of the relevant system of record and fresh question-matched evidence; repo files establish checkout state, not deployment state |
 | What should the system do? | Current accepted requirements, specifications, and policies |
 | What work state was accepted? | Verified repo handoff, active queue, decisions, and evidence |
 | Why was a durable decision made? | Project notes or decision records |

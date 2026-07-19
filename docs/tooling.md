@@ -12,9 +12,9 @@ python scripts/mpmg.py integration-map /path/to/project --format json
 uvx --from git+https://github.com/Jack753951/multi-project-memory-governance.git mpmg integration-map /path/to/project
 ```
 
-By default it writes nothing. `--write` creates only `.mpmg/authority-map.md` (or `.json` with `--format json`); it never edits third-party tool files. Detection is structural, not a claim that any detected content is current or correct.
+By default it writes nothing. `--write` creates `.mpmg/authority-map.md` (or `.json` with `--format json`). An explicit custom output must remain under `.mpmg/`; symlink destinations are rejected. The command never edits third-party tool files. Detection is structural, not a claim that any detected content is current or correct.
 
-JSON output uses the versioned contract `mpmg.integration-map.v1`. Each observed surface includes repository-relative evidence paths, but those paths prove only that an artifact signature was observed—not that the tool is active or that the artifact owns semantic authority. The scan is target-local and does not follow external directory links.
+JSON output uses the versioned contract `mpmg.integration-map.v1`. Each observed surface includes repository-relative evidence paths, but those paths prove only that an artifact signature was observed—not that the tool is active or that the artifact owns semantic authority. The scan is target-local and does not follow external directory links. `scan_warnings` makes unreadable subtrees visible instead of silently presenting a partial inventory as complete. A saved report also records its repository-relative `artifact_written` path so the read-only inspection and the explicitly requested output artifact are not conflated.
 
 ## `scripts/init_governance.py`
 
@@ -24,7 +24,7 @@ Bootstrap a target project with handoff, notes, and agent-context files.
 python scripts/init_governance.py   --target /path/to/project   --project-name MyProject   --notes-namespace notes/Projects/MyProject
 ```
 
-Use `--force` to overwrite generated files.
+Use `--force` to overwrite generated files. `--notes-namespace` and `--context-file` must resolve inside the target. Without `--force`, an existing selected context file is preserved and the command tells you to merge the context snippet manually.
 
 ## `scripts/validate_governance.py`
 

@@ -4,7 +4,7 @@ MPMG is not a replacement for mature instruction, memory, specification, handoff
 
 ## Existing systems already solve important layers
 
-| Layer | Mature examples | What they own | Boundary MPMG can clarify |
+| Layer | Adjacent examples | What they own | Boundary MPMG can clarify |
 |---|---|---|---|
 | Repository instructions | [AGENTS.md](https://agents.md/), [Claude Code memory and CLAUDE.md](https://code.claude.com/docs/en/memory) | Agent instructions, nested/path scope, user or project rules | Which rules are shared, local, generated, or directory-scoped; instructions are context unless separately enforced |
 | Cross-agent instruction distribution | [Ruler](https://github.com/intellectronica/ruler) | Author one rule set and distribute it to several coding assistants | Synchronization does not make every rule authoritative at every scope |
@@ -14,7 +14,7 @@ MPMG is not a replacement for mature instruction, memory, specification, handoff
 | Memory backends | [Mem0](https://github.com/mem0ai/mem0), [Letta](https://github.com/letta-ai/letta), [Graphiti](https://github.com/getzep/graphiti) | Memory storage, retrieval, temporal knowledge, and personalization | Retrieved memory still needs project scope, freshness, and authority limits |
 | Runtime governance | [Tandem](https://github.com/frumu-ai/tandem), tool hooks, permission and approval systems | Enforced actions, approvals, tenant boundaries, and audit trails | Document why a boundary exists; MPMG does not turn prompt text into enforcement |
 
-These projects have stronger adoption, product maturity, or depth in their own categories. MPMG should compose with them rather than reproduce their features.
+These projects address their own layers in greater depth. MPMG should compose with them rather than reproduce their features; this page does not attempt to rank their adoption or maturity.
 
 ## The remaining seam
 
@@ -36,7 +36,7 @@ MPMG's narrow role is to make those questions visible and keep the answers revie
 2. **Add one small overlay before a full layout.** `--write` creates only `.mpmg/authority-map.md`.
 3. **Do not rewrite third-party files.** Existing tools keep ownership of their formats and behavior.
 4. **Do not claim semantic inference.** Filename detection cannot prove freshness, correctness, or actual agent compliance.
-5. **Separate observed and intended truth.** Live validation answers what is happening; accepted specifications and policies answer what should happen. Their mismatch is drift to resolve.
+5. **Separate observed and intended truth.** Direct evidence from the relevant system of record answers what is happening; accepted specifications and policies answer what should happen. Repo files prove checkout state, not deployment state. A mismatch is drift to resolve.
 6. **Leave enforcement to enforcement systems.** Hooks, permissions, approvals, and runtime policy remain outside MPMG.
 
 ## Honest scope

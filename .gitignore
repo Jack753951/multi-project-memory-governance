@@ -20,4 +20,4 @@ build/
 dist/
 *.egg-info/
 .build-test*/
-.wheel-*/
+.wheel-*

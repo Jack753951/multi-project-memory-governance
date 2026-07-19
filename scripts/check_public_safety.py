@@ -6,12 +6,13 @@ common token labels, and placeholder mistakes before publishing.
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
 
 PATTERNS = [
-    ("windows_user_path", re.compile(r'[A-Za-z]:[/\\]Users[/\\][^\s`\'\"]+', re.I)),
+    ("windows_user_path", re.compile(r"[A-Za-z]:(?:\\+|/)Users(?:\\+|/)[^\\/\s\"]+", re.I)),
     ("unix_home_path", re.compile(r'/home/[^\s`\'\"]+', re.I)),
     ("private_env_assignment", re.compile(r'\b(?:API_KEY|TOKEN|SECRET|PASSWORD|COOKIE)\s*=\s*[^\s]+', re.I)),
     ("github_token", re.compile(r'gh[pousr]_[A-Za-z0-9_]{20,}')),
@@ -29,27 +30,42 @@ def is_text_candidate(path: Path) -> bool:
 
 def scan(root: Path):
     findings = []
-    for path in root.rglob("*"):
-        if any(
-            part in SKIP_DIRS
-            or part.startswith(".build-test")
-            or part.startswith(".wheel-")
-            or part.endswith(".egg-info")
-            for part in path.parts
-        ):
-            continue
-        if not path.is_file() or not is_text_candidate(path):
-            continue
-        if path.name == "check_public_safety.py":
-            continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
-        for line_no, line in enumerate(text.splitlines(), 1):
-            for name, pattern in PATTERNS:
-                if pattern.search(line):
-                    findings.append((path, line_no, name, line.strip()[:160]))
+
+    def skip_directory(name: str) -> bool:
+        return (
+            name in SKIP_DIRS
+            or name.startswith(".build-test")
+            or name.endswith(".egg-info")
+        )
+
+    def onerror(exc: OSError) -> None:
+        path = Path(exc.filename) if exc.filename else root
+        findings.append((path, 0, "scan_error", exc.strerror or type(exc).__name__))
+
+    for current, dirs, files in os.walk(root, onerror=onerror, followlinks=False):
+        current_path = Path(current)
+        dirs[:] = sorted(
+            name
+            for name in dirs
+            if not skip_directory(name) and not (current_path / name).is_symlink()
+        )
+        for filename in sorted(files):
+            path = current_path / filename
+            if path.is_symlink() or not is_text_candidate(path):
+                continue
+            if path.name == "check_public_safety.py":
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            except OSError as exc:
+                findings.append((path, 0, "scan_error", exc.strerror or type(exc).__name__))
+                continue
+            for line_no, line in enumerate(text.splitlines(), 1):
+                for name, pattern in PATTERNS:
+                    if pattern.search(line):
+                        findings.append((path, line_no, name, line.strip()[:160]))
 
     return findings
 

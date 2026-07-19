@@ -34,6 +34,7 @@ SKIP_DIRS = {
 DEFAULT_WRITE = "__mpmg_default_write__"
 
 FILE_SURFACES = {
+    ".hermes.md": ("repo-instructions", "Hermes project context and required reads"),
     "AGENTS.md": ("repo-instructions", "Repository or directory-scoped agent instructions"),
     "CLAUDE.md": ("repo-instructions", "Claude Code project instructions"),
     "CLAUDE.local.md": ("local-instructions", "Local Claude Code instructions; usually not shared project truth"),
@@ -86,8 +87,17 @@ def _rel(path: Path, root: Path) -> str:
     return path.relative_to(root).as_posix()
 
 
-def _walk(root: Path):
-    for current, dirs, files in os.walk(root):
+def _walk(root: Path, scan_warnings: list[str]):
+    def onerror(exc: OSError) -> None:
+        failed = Path(exc.filename) if exc.filename else root
+        try:
+            display = failed.resolve().relative_to(root).as_posix() or "."
+        except (OSError, ValueError):
+            display = "<target>"
+        detail = exc.strerror or type(exc).__name__
+        scan_warnings.append(f"Could not scan `{display}`: {detail}.")
+
+    for current, dirs, files in os.walk(root, onerror=onerror, followlinks=False):
         dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
         yield Path(current), dirs, sorted(files)
 
@@ -122,8 +132,9 @@ def inspect(root: Path) -> dict[str, Any]:
 
     found: dict[tuple[str, str], dict[str, Any]] = {}
     memory_candidates: dict[Path, set[str]] = {}
+    scan_warnings: list[str] = []
 
-    for current, dirs, files in _walk(root):
+    for current, dirs, files in _walk(root, scan_warnings):
         rel_dir = _rel(current, root) if current != root else ""
 
         for dirname in dirs:
@@ -181,7 +192,7 @@ def inspect(root: Path) -> dict[str, Any]:
 
     kinds = {item["kind"] for item in surfaces}
     questions = [
-        "Which source owns current observed state, and how is its freshness verified?",
+        "Which system of record owns each observed-state question, and what matching fresh evidence verifies it?",
         "Which source owns intended behavior when specifications and implementation diverge?",
         "Which instructions are global, repository-scoped, directory-scoped, or operator-local?",
         "What must an external worker read explicitly before acting?",
@@ -205,7 +216,7 @@ def inspect(root: Path) -> dict[str, Any]:
         "detected_surfaces": surfaces,
         "overlay_contract": {
             "task_authority": "Current explicit user or operator instruction defines the task and scope; it does not rewrite observed facts.",
-            "current_observed_state": "Live files, configuration, and fresh validation evidence.",
+            "current_observed_state": "Direct observation of the relevant system of record plus fresh, question-matched evidence. Repo files establish checkout state; deployment or runtime claims require deployment or runtime evidence.",
             "intended_behavior": "Current accepted requirements, specifications, and policies; divergence from implementation is drift to resolve, not a reason to silently discard either side.",
             "current_work_state": "One explicitly named repo-local handoff or workflow owner.",
             "long_term_rationale": "Project notes or decision records that link back to current repo truth.",
@@ -213,6 +224,7 @@ def inspect(root: Path) -> dict[str, Any]:
             "external_workers": "Receive explicit required reads, scope, expected output, and validation; inheritance is never assumed.",
         },
         "questions_to_resolve": questions,
+        "scan_warnings": scan_warnings,
         "limitations": [
             "Detection is path- and filename-based; it does not prove that a file is current, correct, or actually read by an agent.",
             "Evidence paths explain why an artifact was reported; they do not prove adoption or semantic authority.",
@@ -222,27 +234,53 @@ def inspect(root: Path) -> dict[str, Any]:
     }
 
 
+def _markdown_cell(value: object) -> str:
+    return (
+        str(value)
+        .replace("\r", " ")
+        .replace("\n", " ")
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("`", "&#96;")
+        .replace("|", "\\|")
+    )
+
+
 def render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# AI Context Integration Map",
         "",
-        f"Root: `{report['root']}`",
-        f"Status: `{report['status']}`",
+        f"Root: `{_markdown_cell(report['root'])}`",
+        f"Status: `{_markdown_cell(report['status'])}`",
         "Mode: read-only inspection",
-        "",
-        f"> {report['purpose']}",
-        "",
-        "## Detected context surfaces",
-        "",
     ]
+    if report.get("artifact_written"):
+        lines.append(f"Artifact written: `{_markdown_cell(report['artifact_written'])}`")
+    lines.extend(
+        [
+            "",
+            f"> {_markdown_cell(report['purpose'])}",
+            "",
+            "## Detected context surfaces",
+            "",
+        ]
+    )
     surfaces = report["detected_surfaces"]
     if not surfaces:
         lines.append("No known context surfaces detected.")
     else:
         lines.extend(["| Surface | Kind | Paths | Suggested role |", "|---|---|---|---|"])
         for item in surfaces:
-            paths = "<br>".join(f"`{path}`" for path in item["paths"])
-            lines.append(f"| {item['name']} | `{item['kind']}` | {paths} | {item['guidance']} |")
+            paths = "<br>".join(f"`{_markdown_cell(path)}`" for path in item["paths"])
+            lines.append(
+                f"| {_markdown_cell(item['name'])} | `{_markdown_cell(item['kind'])}` | "
+                f"{paths} | {_markdown_cell(item['guidance'])} |"
+            )
+
+    if report.get("scan_warnings"):
+        lines.extend(["", "## Incomplete scan warnings", ""])
+        lines.extend(f"- {_markdown_cell(warning)}" for warning in report["scan_warnings"])
 
     lines.extend(["", "## Thin overlay contract", ""])
     labels = {
@@ -278,6 +316,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--force", action="store_true", help="Overwrite an existing --write path")
     args = parser.parse_args(argv)
 
+    if args.force and not args.write:
+        parser.error("--force requires --write")
+
     root = Path(args.target).resolve()
     try:
         report = inspect(root)
@@ -287,23 +328,35 @@ def main(argv: list[str] | None = None) -> int:
     if args.write:
         if args.write == DEFAULT_WRITE:
             suffix = "json" if args.format == "json" else "md"
-            write_value = f".mpmg/authority-map.{suffix}"
+            requested_destination = root / ".mpmg" / f"authority-map.{suffix}"
         else:
-            write_value = args.write
-        destination = Path(write_value)
-        if not destination.is_absolute():
-            destination = root / destination
-        destination = destination.resolve()
+            custom_destination = Path(args.write)
+            if custom_destination.is_absolute():
+                parser.error("--write path must be relative to target and stay under .mpmg/")
+            requested_destination = root / custom_destination
+
+        overlay_directory = root / ".mpmg"
+        if overlay_directory.is_symlink():
+            parser.error("refusing to write through a symlinked .mpmg directory")
+        if requested_destination.is_symlink():
+            parser.error("refusing to write through a symlink destination")
+        overlay_root = overlay_directory.resolve()
         try:
-            destination.relative_to(root)
+            overlay_root.relative_to(root)
         except ValueError:
-            parser.error(f"--write path must stay inside target: {destination}")
+            parser.error("refusing to write through .mpmg outside target")
+        destination = requested_destination.resolve()
+        try:
+            destination.relative_to(overlay_root)
+        except ValueError:
+            parser.error("--write path must stay under target/.mpmg/")
         if destination.is_dir():
             parser.error(f"--write path is a directory: {destination}")
         if destination.exists() and not args.force:
             parser.error(f"refusing to overwrite existing file: {destination}; use --force")
         saved_report = dict(report)
         saved_report["root"] = "."
+        saved_report["artifact_written"] = destination.relative_to(root).as_posix()
         text = json.dumps(saved_report, indent=2, ensure_ascii=False) + "\n" if args.format == "json" else render_markdown(saved_report)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(text, encoding="utf-8", newline="\n")

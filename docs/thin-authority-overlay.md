@@ -73,9 +73,9 @@ A single linear precedence list is not sufficient for every disagreement.
 
 ### Current observed state
 
-For questions such as "what code is deployed?" or "which tests pass now?", prefer:
+Match the evidence to the question. For example, repo files can answer "what code is checked out?", fresh test output can answer "which tests pass in this environment?", and deployment-system or runtime evidence is needed for "what code is deployed?" Prefer:
 
-1. live files, configuration, and fresh validation evidence;
+1. direct observation of the relevant system of record and fresh question-matched evidence;
 2. verified current handoff;
 3. project notes and memory as leads that require verification.
 

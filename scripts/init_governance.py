@@ -84,22 +84,39 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     target = Path(args.target).resolve()
-    notes_namespace = args.notes_namespace.strip("/")
+    if target.exists() and not target.is_dir():
+        parser.error(f"target is not a directory: {target}")
+
+    def target_relative(value: str, label: str) -> str:
+        if not value.strip():
+            parser.error(f"{label} must not be empty")
+        destination = (target / Path(value)).resolve()
+        try:
+            relative = destination.relative_to(target)
+        except ValueError:
+            parser.error(f"{label} must stay inside target: {destination}")
+        if relative == Path("."):
+            parser.error(f"{label} must name a path under target")
+        return relative.as_posix()
+
+    notes_namespace = target_relative(args.notes_namespace, "--notes-namespace")
+    context_file = target_relative(args.context_file, "--context-file")
+    target.mkdir(parents=True, exist_ok=True)
     actions = []
-    actions.append(write_if_missing(target / "handoff" / "memory_governance.md", render(read_template("handoff-memory-governance.md"), args.project_name, notes_namespace, args.context_file), args.force))
-    actions.append(write_if_missing(target / "handoff" / "active_strategy_queue.md", render(read_template("active-strategy-queue.md"), args.project_name, notes_namespace, args.context_file), args.force))
-    actions.append(write_if_missing(target / "handoff" / "INDEX.md", build_handoff_index(args.context_file, notes_namespace), args.force))
+    actions.append(write_if_missing(target / "handoff" / "memory_governance.md", render(read_template("handoff-memory-governance.md"), args.project_name, notes_namespace, context_file), args.force))
+    actions.append(write_if_missing(target / "handoff" / "active_strategy_queue.md", render(read_template("active-strategy-queue.md"), args.project_name, notes_namespace, context_file), args.force))
+    actions.append(write_if_missing(target / "handoff" / "INDEX.md", build_handoff_index(context_file, notes_namespace), args.force))
     actions.append(write_if_missing(target / "handoff" / "accepted_changes.md", "# Accepted Changes\n\n", args.force))
     actions.append(write_if_missing(target / "handoff" / "worker_tasks" / "README.md", "# Worker Tasks\n\nUse bounded worker task files here.\n", args.force))
     actions.append(write_if_missing(target / "handoff" / "reviews" / "README.md", "# Reviews\n\nUse review-output artifacts here.\n", args.force))
     actions.append(write_if_missing(target / notes_namespace / "00_Index.md", build_notes_index(args.project_name), args.force))
-    context_path = target / args.context_file
+    context_path = target / context_file
     if not context_path.exists() or args.force:
         context = f"# {args.project_name} agent context\n\n" + render(
             read_template("project-context-snippet.md"),
             args.project_name,
             notes_namespace,
-            args.context_file,
+            context_file,
         )
         actions.append(write_if_missing(context_path, context, args.force))
     else:

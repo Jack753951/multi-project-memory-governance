@@ -6,7 +6,7 @@ Scope: `<project-name>`, repo-local handoff, project notes, external worker prom
 ## Authority order by question
 
 1. **Task and scope:** current explicit user/operator instruction.
-2. **Current observed state:** live repo files, configuration, and fresh validation evidence.
+2. **Current observed state:** direct observation of the relevant system of record and fresh question-matched evidence; repo files establish checkout state, while deployment/runtime claims require corresponding external evidence.
 3. **Intended behavior:** current accepted requirements, specifications, and policies.
 4. **Accepted work state:** verified repo handoff.
 5. **Long-term rationale:** project notes.

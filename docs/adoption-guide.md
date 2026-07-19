@@ -25,10 +25,12 @@ python scripts/mpmg.py integration-map /path/to/your/project --write
 - Selective contracts: add only missing worker-read, freshness, or notes-pointer rules.
 - Full kit: initialize the complete layout only for projects that need it.
 
-For full initialization:
+Before full initialization, choose the project's primary context surface. If the repo already uses `AGENTS.md`, `CLAUDE.md`, or another shared instruction file, pass it with `--context-file`; the initializer will preserve an existing file and tell you to merge the snippet manually. Omitting the option creates `.hermes.md` when it does not already exist.
+
+For a repo that already uses `AGENTS.md`:
 
 ```bash
-python scripts/mpmg.py init --target /path/to/your/project --project-name MyProject --notes-namespace notes/Projects/MyProject
+python scripts/mpmg.py init --target /path/to/your/project --project-name MyProject --notes-namespace notes/Projects/MyProject --context-file AGENTS.md
 ```
 
 This creates the full handoff and notes structure:
@@ -36,9 +38,11 @@ This creates the full handoff and notes structure:
 - `handoff/memory_governance.md`
 - `handoff/active_strategy_queue.md`
 - `handoff/INDEX.md`
+- `handoff/accepted_changes.md`
 - `handoff/worker_tasks/README.md`
 - `handoff/reviews/README.md`
 - `notes/Projects/MyProject/00_Index.md`
+- the selected context file, only when it does not already exist (default: `.hermes.md`)
 
 ## 3. Add the context snippet only where needed
 

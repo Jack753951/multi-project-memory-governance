@@ -2,7 +2,7 @@
 
 This project models memory governance as a thin authority overlay between existing context systems. The goal is not to maximize how much an agent remembers or to replace the tools that store instructions, specifications, handoffs, notes, or memory. The goal is to make their scopes and seams explicit.
 
-Every important fact should have one authoritative home. Other layers may point to it or help recover it, but lower-authority memory must not silently override current instructions, live files, or verified project state. MPMG itself should remain a map and boundary contract, not become another database that duplicates those facts.
+Every important question or claim category should have a named authority. Task scope, checkout state, deployment state, intended behavior, accepted work state, and long-term rationale may legitimately have different owners. MPMG itself should remain a map and boundary contract, not become another database that duplicates those facts.
 
 ```mermaid
 flowchart TD
@@ -26,14 +26,14 @@ flowchart TD
 
 ## Layer contract
 
-Authority depends on the question. Current user/operator instruction controls task and scope, but does not rewrite observed facts. For **current observed state**, live files, configuration, and fresh validation evidence outrank handoff, notes, memory, and old sessions until lower claims are re-verified. Skills are intentionally outside the order because they define reusable procedures rather than project facts.
+Authority depends on the question. Current user/operator instruction controls task and scope, but does not rewrite observed facts. For **current observed state**, directly inspect the relevant system of record and use fresh evidence matched to the claim. Repo files establish current checkout or on-disk state; deployment state requires deployment-system or runtime evidence. Handoff, notes, memory, and old sessions remain leads until re-verified. Skills are intentionally outside the order because they define reusable procedures rather than project facts.
 
 For questions about **intended behavior**, accepted specifications and policies form a separate normative authority. A mismatch between specification and implementation is drift to resolve, not proof that either side should be silently discarded. The project must identify the owner and decide which artifact changes.
 
 | Layer | Question it answers | Update cadence |
 |---|---|---|
 | Current instruction | What task and scope did the human authorize now? | Each session/task |
-| Live repo/files | What is actually true on disk? | Every verification |
+| Relevant system of record | What is directly observable for this question—for example checkout, deployment, runtime, or external service state? | Every verification |
 | Accepted specifications/policies | What is the system intended or required to do? | After an approved requirement/policy change |
 | Repo handoff | What changed, what was verified, what is blocked? | After accepted work/reviews |
 | Active queue | What is the current lane and next safe action? | After phase/priority changes |
