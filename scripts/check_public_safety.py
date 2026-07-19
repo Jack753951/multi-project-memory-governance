@@ -19,7 +19,7 @@ PATTERNS = [
     ("aws_access_key", re.compile(r'AKIA[0-9A-Z]{16}')),
 ]
 
-SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__"}
+SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "build", "dist"}
 TEXT_EXTS = {".md", ".txt", ".py", ".yaml", ".yml", ".json", ".toml", ".gitignore"}
 
 
@@ -30,7 +30,13 @@ def is_text_candidate(path: Path) -> bool:
 def scan(root: Path):
     findings = []
     for path in root.rglob("*"):
-        if any(part in SKIP_DIRS for part in path.parts):
+        if any(
+            part in SKIP_DIRS
+            or part.startswith(".build-test")
+            or part.startswith(".wheel-")
+            or part.endswith(".egg-info")
+            for part in path.parts
+        ):
             continue
         if not path.is_file() or not is_text_candidate(path):
             continue

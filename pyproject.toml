@@ -1,10 +1,14 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
 [project]
 name = "multi-project-memory-governance"
 version = "0.3.0"
-description = "AI coding agent context hygiene kit for preventing project mixups, memory contamination, stale handoffs, and missing review metadata."
+description = "Thin authority overlay for mapping trust, scope, and freshness across AI coding agent context systems."
 readme = "README.md"
-requires-python = ">=3.9"
-license = { text = "MIT" }
+requires-python = ">=3.10"
+license = "MIT"
 authors = [{ name = "Hermes Agent community" }]
 keywords = [
   "ai-agents",
@@ -31,6 +35,7 @@ Repository = "https://github.com/Jack753951/multi-project-memory-governance"
 Issues = "https://github.com/Jack753951/multi-project-memory-governance/issues"
 
 [project.scripts]
+mpmg-integration-map = "scripts.integration_map:main"
 mpmg-plan-handoff-cleanup = "scripts.plan_handoff_cleanup:main"
 mpmg-doctor = "scripts.doctor:main"
 mpmg = "scripts.mpmg:main"
@@ -41,6 +46,23 @@ mpmg-safety-scan = "scripts.check_public_safety:main"
 mpmg-export-public = "scripts.export_public_subset:main"
 mpmg-worker-task = "scripts.new_worker_task:main"
 mpmg-audit = "scripts.governance_audit:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]
+
+[tool.hatch.build.targets.wheel.force-include]
+".github" = "scripts/_kit/.github"
+"docs" = "scripts/_kit/docs"
+"examples" = "scripts/_kit/examples"
+"skills" = "scripts/_kit/skills"
+"templates" = "scripts/_kit/templates"
+"tests" = "scripts/_kit/tests"
+"README.md" = "scripts/_kit/README.md"
+"LICENSE" = "scripts/_kit/LICENSE"
+"CONTRIBUTING.md" = "scripts/_kit/CONTRIBUTING.md"
+"SECURITY.md" = "scripts/_kit/SECURITY.md"
+"CODE_OF_CONDUCT.md" = "scripts/_kit/CODE_OF_CONDUCT.md"
+"pyproject.toml" = "scripts/_kit/pyproject.toml"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

@@ -16,3 +16,8 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
+.build-test*/
+.wheel-*/

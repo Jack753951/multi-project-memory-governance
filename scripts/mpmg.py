@@ -10,12 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import (
+from scripts import (  # noqa: E402 - source-checkout bootstrap
     check_public_safety,
     doctor,
     export_public_subset,
     governance_audit,
     init_governance,
+    integration_map,
     new_worker_task,
     plan_handoff_cleanup,
     validate_artifacts,
@@ -32,6 +33,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--project-name", required=True)
     p.add_argument("--notes-namespace", required=True)
     p.add_argument("--context-file", default=".hermes.md")
+    p.add_argument("--force", action="store_true")
+
+    p = sub.add_parser("integration-map", help="Read-only map of existing AI context systems and their authority seams")
+    p.add_argument("target", nargs="?", default=".")
+    p.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    p.add_argument("--write", nargs="?", const=integration_map.DEFAULT_WRITE)
     p.add_argument("--force", action="store_true")
 
     p = sub.add_parser("validate", help="Validate governance layout")
@@ -78,6 +85,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "init":
         return init_governance.main(["--target", args.target, "--project-name", args.project_name, "--notes-namespace", args.notes_namespace, "--context-file", args.context_file] + (["--force"] if args.force else []))
+    if args.command == "integration-map":
+        forwarded = [args.target, "--format", args.format]
+        if args.write:
+            forwarded.extend(["--write", args.write])
+        if args.force:
+            forwarded.append("--force")
+        return integration_map.main(forwarded)
     if args.command == "validate":
         return validate_governance.main([args.target])
     if args.command == "validate-artifacts":

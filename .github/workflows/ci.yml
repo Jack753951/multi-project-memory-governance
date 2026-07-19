@@ -14,6 +14,24 @@ jobs:
           python-version: '3.11'
       - name: Unit tests
         run: python -m unittest discover -s tests
+      - name: Python lint
+        run: |
+          python -m pip install ruff
+          ruff check scripts tests
+      - name: Thin overlay smoke test
+        run: |
+          python scripts/mpmg.py integration-map examples/agent-chaos-before-after/before --format markdown
+          python scripts/mpmg.py integration-map examples/agent-chaos-before-after/after --format json
+      - name: Installed package smoke test
+        run: |
+          python -m pip install .
+          cd "$RUNNER_TEMP"
+          mpmg integration-map "$GITHUB_WORKSPACE/examples/agent-chaos-before-after/before" --format json
+          mpmg init --target "$RUNNER_TEMP/mpmg-installed-project" --project-name InstalledSmoke --notes-namespace notes/Projects/InstalledSmoke
+          mpmg validate "$RUNNER_TEMP/mpmg-installed-project"
+          mpmg worker-task --target "$RUNNER_TEMP/mpmg-installed-project" --name smoke --task "Verify packaged templates." --scope handoff/
+          mpmg export-public --output "$RUNNER_TEMP/mpmg-installed-export" --force
+          test ! -d "$RUNNER_TEMP/mpmg-installed-export/scripts/_kit"
       - name: Validate example project
         run: python scripts/validate_governance.py examples/minimal-project
       - name: Governance audit

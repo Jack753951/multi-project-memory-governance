@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import check_public_safety
+from scripts import check_public_safety  # noqa: E402 - source-checkout bootstrap
+from scripts.resources import resource_path  # noqa: E402 - source-checkout bootstrap
 
 INCLUDE = [
     "README.md",
@@ -34,7 +35,11 @@ def copy_item(src: Path, dst: Path) -> None:
     if src.is_dir():
         if dst.exists():
             shutil.rmtree(dst)
-        shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".git"))
+        shutil.copytree(
+            src,
+            dst,
+            ignore=shutil.ignore_patterns("_kit", "__pycache__", "*.pyc", ".git"),
+        )
     elif src.exists():
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
@@ -50,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
         shutil.rmtree(output)
     output.mkdir(parents=True, exist_ok=True)
     for rel in INCLUDE:
-        copy_item(ROOT / rel, output / rel)
+        copy_item(resource_path(rel), output / rel)
     code = check_public_safety.main_for_path(output) if hasattr(check_public_safety, "main_for_path") else None
     if code is None:
         import sys

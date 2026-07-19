@@ -19,14 +19,16 @@ This policy prevents project state from leaking into global agent memory while p
 | Skills | Reusable procedure and judgment criteria | Project logs, project-specific current state |
 | Session search | Recall leads from prior conversations | Final authority without file verification |
 
-## Authority order
+## Authority order by question
 
-1. Current explicit user/operator instruction.
-2. Live project files, config, validation output, and current repo state.
-3. Repo handoff files for engineering truth and gates.
-4. Project notes / Obsidian namespace for strategy, rationale, decisions, and reviews.
-5. Global durable memory for compact preferences and pointers.
-6. Session search as recall only; verify before relying on it.
+1. **Task and scope:** current explicit user/operator instruction.
+2. **Current observed state:** live project files, config, and fresh validation evidence.
+3. **Intended behavior:** current accepted requirements, specifications, and policies.
+4. **Accepted work state:** verified repo handoff and gates.
+5. **Long-term rationale:** project notes / Obsidian decisions and reviews.
+6. **Recall and discovery:** compact global-memory signposts, then session search; verify changing facts before relying on them.
+
+Current instruction controls the task but does not rewrite observed facts. A specification/implementation mismatch is drift to resolve, not a conflict that should be flattened silently.
 
 ## Memory-save checklist
 

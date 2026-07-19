@@ -2,6 +2,18 @@
 
 This repository includes small Python tools that make the governance policy usable instead of merely descriptive.
 
+## `scripts/integration_map.py`
+
+Read-only inventory of existing repository-local AI context systems. It detects common instruction, specification, handoff, project-memory, and notes surfaces, then emits a proposed role map and questions that still require a project owner.
+
+```bash
+python scripts/mpmg.py integration-map /path/to/project
+python scripts/mpmg.py integration-map /path/to/project --format json
+uvx --from git+https://github.com/Jack753951/multi-project-memory-governance.git mpmg integration-map /path/to/project
+```
+
+By default it writes nothing. `--write` creates only `.mpmg/authority-map.md`; it never edits third-party tool files. Detection is structural, not a claim that any detected content is current or correct.
+
 ## `scripts/init_governance.py`
 
 Bootstrap a target project with handoff, notes, and agent-context files.
@@ -67,6 +79,7 @@ Use this when adapting a private governance substrate into a public teaching rep
 All helpers are also available through one command:
 
 ```bash
+python scripts/mpmg.py integration-map /path/to/project
 python scripts/mpmg.py init --target /path/to/project --project-name MyProject --notes-namespace notes/Projects/MyProject
 python scripts/mpmg.py validate /path/to/project
 python scripts/mpmg.py audit /path/to/project --format markdown

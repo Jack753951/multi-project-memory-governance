@@ -12,11 +12,13 @@ Add this to `.hermes.md`, `AGENTS.md`, `CLAUDE.md`, or equivalent.
 
 External workers must not assume access to global durable memory. If a fact matters for workers, write it into repo handoff, project context files, or the project notes namespace.
 
-## Authority order
+## Authority order by question
 
-1. Current explicit user/operator instruction.
-2. Live repo files and validation output.
-3. Repo handoff files.
-4. Project notes / Obsidian namespace.
-5. Global durable memory as compact signposts only.
-6. Session search as recall only.
+1. **Task and scope:** current explicit user/operator instruction.
+2. **Current observed state:** live repo files, configuration, and fresh validation evidence.
+3. **Intended behavior:** current accepted requirements, specifications, and policies.
+4. **Accepted work state:** verified repo handoff.
+5. **Long-term rationale:** project notes / Obsidian namespace.
+6. **Recall and discovery:** compact global-memory signposts, then session search; verify changing facts.
+
+Current instruction controls the task but does not rewrite observed facts. Expose specification/implementation drift for resolution.

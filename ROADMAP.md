@@ -10,12 +10,15 @@ This roadmap keeps the project honest about its current shape: a practical gover
 - Add a handoff cleanup planner that inventories a messy handoff directory before humans or agents move files.
 - Keep all examples synthetic and public-safe.
 
-## v0.4: migration quality
+## v0.4: overlay and migration quality
 
+- Keep read-only `integration-map` as the default entry point for existing projects.
+- Detect common instruction, handoff, specification, project-memory, and notes surfaces without rewriting them.
+- Distinguish current observed state from intended behavior and surface drift for human resolution.
 - Add before/after migration examples.
 - Add stronger validators for worker task briefs and review identity blocks.
 - Add optional JSON schemas for machine-readable governance fragments.
-- Add docs for adopting the kit in Hermes, Claude Code, Codex, and generic AGENTS.md workflows.
+- Add docs for adopting the overlay in Hermes, Claude Code, Codex, generic AGENTS.md, and adjacent workflow tools.
 
 ## v0.5: package quality
 

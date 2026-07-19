@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import check_public_safety, validate_governance
+from scripts import check_public_safety, validate_governance  # noqa: E402 - source-checkout bootstrap
 
 
 def run_safety(root: Path) -> tuple[int, str]:

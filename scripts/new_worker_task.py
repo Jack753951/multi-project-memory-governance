@@ -7,7 +7,7 @@ import re
 from datetime import date
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from scripts.resources import resource_path
 
 
 def slugify(value: str) -> str:
@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
         output = target / output
     if output.exists() and not args.force:
         raise SystemExit(f"refusing to overwrite existing file: {output}")
-    template = (ROOT / "templates" / "worker-task.md").read_text(encoding="utf-8")
+    template = resource_path("templates/worker-task.md").read_text(encoding="utf-8")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(render(template, args), encoding="utf-8", newline="\n")
     print(output)

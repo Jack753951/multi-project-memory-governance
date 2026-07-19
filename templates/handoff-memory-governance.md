@@ -3,14 +3,16 @@
 Status: active
 Scope: `<project-name>`, repo-local handoff, project notes, external worker prompts, and session recall.
 
-## Authority order
+## Authority order by question
 
-1. Current explicit user/operator instruction.
-2. Live repo files and validation output.
-3. Repo handoff files for accepted engineering state.
-4. Project notes for long-term strategy/rationale.
-5. Global durable memory for compact profile-level pointers and preferences.
-6. Session search as recall only; verify before acting.
+1. **Task and scope:** current explicit user/operator instruction.
+2. **Current observed state:** live repo files, configuration, and fresh validation evidence.
+3. **Intended behavior:** current accepted requirements, specifications, and policies.
+4. **Accepted work state:** verified repo handoff.
+5. **Long-term rationale:** project notes.
+6. **Recall and discovery:** compact global-memory signposts, then session search; verify changing facts before acting.
+
+Current instruction controls the task but does not rewrite observed facts. Specification/implementation disagreement is drift to resolve.
 
 ## Where information belongs
 

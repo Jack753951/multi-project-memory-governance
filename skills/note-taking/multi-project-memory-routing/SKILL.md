@@ -38,14 +38,16 @@ Use when:
 
 Do not use this skill to store project progress, private paths, target names, credentials, raw logs, or run artifacts.
 
-## Authority Order
+## Authority Order by Question
 
-1. Current explicit user/operator instruction.
-2. Live project files, config, validation output, and current repo state.
-3. Repo handoff files for accepted engineering state.
-4. Project notes / Obsidian namespace for long-term strategy and rationale.
-5. Global durable memory for compact preferences and pointers.
-6. Session search only as recall; verify before acting.
+1. **Task and scope:** current explicit user/operator instruction.
+2. **Current observed state:** live project files, config, and fresh validation evidence.
+3. **Intended behavior:** current accepted requirements, specifications, and policies.
+4. **Accepted work state:** verified repo handoff.
+5. **Long-term rationale:** project notes / Obsidian namespace.
+6. **Recall and discovery:** compact global-memory signposts, then session search; verify changing facts before acting.
+
+Current instruction controls the task but does not rewrite observed facts. Surface specification/implementation drift instead of silently choosing a side.
 
 ## Decision Tree
 

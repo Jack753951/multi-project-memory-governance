@@ -5,11 +5,11 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from scripts.resources import resource_path
 
 
 def read_template(name: str) -> str:
-    return (ROOT / "templates" / name).read_text(encoding="utf-8")
+    return resource_path(f"templates/{name}").read_text(encoding="utf-8")
 
 
 def render(text: str, project_name: str, notes_namespace: str, context_file: str) -> str:

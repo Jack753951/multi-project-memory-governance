@@ -1,61 +1,50 @@
-# Related Work and Search Positioning
+# Related Work and Integration Boundaries
 
-This project sits in an early, overlapping space: AI coding agent context hygiene, memory governance, handoff discipline, and repo-local authority boundaries.
+MPMG is not a replacement for mature instruction, memory, specification, handoff, or runtime-governance systems. It is a thin authority overlay between them.
 
-The closest projects are not exact replacements. Most focus on one layer: memory storage, agent orchestration, handoff transport, AGENTS.md linting, or runtime policy. This repository focuses on the boundary between those layers: which context is allowed to be truth for a specific project, what external workers must read, what global memory must not store, what review artifacts must disclose, and how private agent workflows can be exported safely.
+## Existing systems already solve important layers
 
-## Search phrases this project is meant to match
-
-Use these phrases when describing, tagging, or comparing this repository:
-
-- AI coding agent context hygiene
-- AI agent project hygiene
-- stop AI agents from mixing up projects
-- AGENTS.md context rot
-- Claude Code handoff governance
-- Codex handoff governance
-- repo-local memory governance
-- AI agent memory boundary
-- multi-agent handoff validation
-- worker task brief validator
-- AI review metadata
-- public export safety for AI workflows
-- authority boundary for AI coding agents
-- long-running AI coding workflow hygiene
-
-## Comparison table
-
-| Category | Similar projects / search area | They usually focus on | This repository focuses on |
+| Layer | Mature examples | What they own | Boundary MPMG can clarify |
 |---|---|---|---|
-| Agent memory layers | MemMachine, ReMe, AGiXT, vector/database-backed memory systems | Storing, retrieving, refining, or sharing agent memory | Deciding what memory is allowed to mean in a specific project and keeping global memory out of project-state storage |
-| Coding-agent handoff | ai-memory, claude-codex-handoff, loop/state-kernel projects | Passing state between Claude Code, Codex, Gemini CLI, or other coding agents | Bounded handoff with required reads, repo-local truth, worker scope limits, and review evidence |
-| Context hygiene / AGENTS.md tools | agent-context-kit, context-guard, agents-lint, AGENTS.md/CLAUDE.md templates | Generating, linting, compacting, redacting, or refreshing agent context files | A full project hygiene layer across context files, handoff directories, worker tasks, review metadata, and public-export checks |
-| Agent workflow governance | Tandem, agentic-os, SoloFlow, enterprise agent-control planes | Runtime policy, approvals, orchestration, action control, audit trails | Lightweight repo-local governance that can be used with existing agents without adopting a new runtime |
-| Multi-agent collaboration | Traceplane, agent-room, workflow composers | Agent rooms, shared work threads, orchestration, collaboration UX | Filesystem-native project boundaries and evidence discipline that survive across tools and sessions |
+| Repository instructions | [AGENTS.md](https://agents.md/), [Claude Code memory and CLAUDE.md](https://code.claude.com/docs/en/memory) | Agent instructions, nested/path scope, user or project rules | Which rules are shared, local, generated, or directory-scoped; instructions are context unless separately enforced |
+| Cross-agent instruction distribution | [Ruler](https://github.com/intellectronica/ruler) | Author one rule set and distribute it to several coding assistants | Synchronization does not make every rule authoritative at every scope |
+| Project memory | [Cline Memory Bank](https://docs.cline.bot/best-practices/memory-bank), [Project Butler](https://github.com/JamesShi96/project-butler) | Durable project context and cross-session continuity | Changing facts require freshness checks; memory is not automatically current state |
+| Handoff, plans, and evidence | [Sopify](https://github.com/evidentloop/sopify) | Cross-agent work continuity, decisions, and verification evidence | Name one owner for current work state and declare required reads for workers |
+| Specifications and change artifacts | [Spec Kit](https://github.com/github/spec-kit), [OpenSpec](https://github.com/Fission-AI/OpenSpec), [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) | Intended behavior, plans, tasks, and reviewable change intent | Separate normative truth from observed implementation; expose drift instead of silently choosing one |
+| Memory backends | [Mem0](https://github.com/mem0ai/mem0), [Letta](https://github.com/letta-ai/letta), [Graphiti](https://github.com/getzep/graphiti) | Memory storage, retrieval, temporal knowledge, and personalization | Retrieved memory still needs project scope, freshness, and authority limits |
+| Runtime governance | [Tandem](https://github.com/frumu-ai/tandem), tool hooks, permission and approval systems | Enforced actions, approvals, tenant boundaries, and audit trails | Document why a boundary exists; MPMG does not turn prompt text into enforcement |
 
-## Differentiation
+These projects have stronger adoption, product maturity, or depth in their own categories. MPMG should compose with them rather than reproduce their features.
 
-This project is not trying to be another agent runtime or universal memory backend. It is a small, inspectable governance kit for repositories where AI assistants already work.
+## The remaining seam
 
-It emphasizes:
+When several layers are present at once, a project still needs to answer:
 
-1. **Authority boundaries** — chat history, session search, global memory, repo handoff, project notes, and live files have different authority.
-2. **Multi-project isolation** — one agent profile should not turn into a shared project database.
-3. **Worker context contracts** — external workers must have explicit required reads, scope limits, disallowed actions, expected output, and validation commands.
-4. **Review artifact identity** — reviews should disclose route/tool, visible model when exposed, focus, and limitations.
-5. **Public export safety** — private workflows should be transformed into sanitized public examples rather than copied raw.
-6. **Doctor-first adoption** — a user should be able to run a command and see context drift before reading the full methodology.
+- Which source owns current observed state?
+- Which source owns intended behavior?
+- Which handoff or workflow artifact owns active work state?
+- Which instructions are global, repository-scoped, path-scoped, or local?
+- Which memory sources are recall aids only?
+- What must an external worker read explicitly?
+- Who resolves a conflict, and what evidence is required?
 
-## Honest positioning
+MPMG's narrow role is to make those questions visible and keep the answers reviewable.
 
-This is an early-stage niche, but the underlying problem is growing. As more people use Claude Code, Codex, Cursor, Hermes, local subagents, AGENTS.md, CLAUDE.md, persistent memory, and multi-repo workflows, more projects will hit context drift and memory contamination.
+## Design consequences
 
-The goal is to be discoverable by users who do not yet say "memory governance" but do say things like:
+1. **Inspect before generating.** `mpmg integration-map` is read-only by default.
+2. **Add one small overlay before a full layout.** `--write` creates only `.mpmg/authority-map.md`.
+3. **Do not rewrite third-party files.** Existing tools keep ownership of their formats and behavior.
+4. **Do not claim semantic inference.** Filename detection cannot prove freshness, correctness, or actual agent compliance.
+5. **Separate observed and intended truth.** Live validation answers what is happening; accepted specifications and policies answer what should happen. Their mismatch is drift to resolve.
+6. **Leave enforcement to enforcement systems.** Hooks, permissions, approvals, and runtime policy remain outside MPMG.
 
-- "my AI agent keeps using rules from another repo";
-- "my AGENTS.md is stale";
-- "Claude and Codex need a handoff protocol";
-- "my handoff folder is a mess";
-- "external agents do not know what to read";
-- "AI reviews need model/tool metadata";
-- "I need to sanitize a private AI workflow before open-sourcing it".
+## Honest scope
+
+MPMG combines practices that already exist separately; it does not claim to have invented project-local instructions, persistent project memory, handoff artifacts, specification-driven development, or runtime governance.
+
+Its contribution is the compatibility contract between those practices:
+
+> When more context systems are connected to an agent, specify what each one may be trusted for and how conflicts become visible.
+
+There is not yet evidence that MPMG is a broadly adopted standard. Treat it as an early, inspectable method and tool, validate it in real projects, and keep only the parts that reduce confusion.

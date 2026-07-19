@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import governance_audit, validate_artifacts
+from scripts import governance_audit, validate_artifacts  # noqa: E402 - source-checkout bootstrap
 
 
 def doctor(root: Path) -> dict:
