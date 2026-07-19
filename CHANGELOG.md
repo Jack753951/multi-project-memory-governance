@@ -9,11 +9,12 @@ All notable changes are documented here. This project uses human-readable versio
 - Read-only `mpmg integration-map` command for detecting existing context systems without modifying them.
 - Optional one-file `.mpmg/authority-map.md` overlay and integration guidance for existing instruction, memory, handoff, specification, and project-notes systems.
 - Installable wheel resources and package smoke coverage for `integration-map`, full initialization, worker-task templates, and public export.
-- Pain-point-oriented README positioning for AI agents mixing up projects.
+- Versioned `mpmg.integration-map.v1` JSON output with explicit observed-artifact evidence and target-local scan scope.
+- Thin authority-overlay README positioning for AI agents mixing up projects.
 - Before/after demo showing a messy AI-agent project and a governed project.
 - Doctor integration with artifact metadata validation.
-- Related-work and keyword positioning page for GitHub discoverability.
-- Search-oriented package description and keywords for AI coding agent context hygiene.
+- Related-work page documenting compatibility boundaries with adjacent tools.
+- Package metadata for direct Git and wheel installation.
 
 ### Changed
 

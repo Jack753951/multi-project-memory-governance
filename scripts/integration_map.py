@@ -173,6 +173,11 @@ def inspect(root: Path) -> dict[str, Any]:
     surfaces = sorted(found.values(), key=lambda item: (item["kind"], item["name"].lower()))
     for item in surfaces:
         item["paths"].sort()
+        item["status"] = "observed"
+        item["evidence"] = [
+            {"path": path, "basis": "repository_path_signature"}
+            for path in item["paths"]
+        ]
 
     kinds = {item["kind"] for item in surfaces}
     questions = [
@@ -188,10 +193,14 @@ def inspect(root: Path) -> dict[str, Any]:
         questions.append("No shared repository instruction file was detected; decide how agents discover project rules.")
 
     return {
-        "schema_version": 1,
+        "schema_version": "mpmg.integration-map.v1",
         "status": "proposed-not-authoritative",
         "root": str(root),
         "read_only": True,
+        "scan_scope": {
+            "target_only": True,
+            "follow_external_links": False,
+        },
         "purpose": "Map existing context systems so they can coexist without silently competing for authority.",
         "detected_surfaces": surfaces,
         "overlay_contract": {
@@ -206,6 +215,7 @@ def inspect(root: Path) -> dict[str, Any]:
         "questions_to_resolve": questions,
         "limitations": [
             "Detection is path- and filename-based; it does not prove that a file is current, correct, or actually read by an agent.",
+            "Evidence paths explain why an artifact was reported; they do not prove adoption or semantic authority.",
             "External memory backends and runtime policy systems may not leave repository-local markers and cannot be inferred reliably.",
             "The report proposes roles, not semantic truth. A human or project owner must resolve real conflicts.",
         ],

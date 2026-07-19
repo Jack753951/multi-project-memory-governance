@@ -22,15 +22,30 @@ class IntegrationMapTests(unittest.TestCase):
             (root / "memory-bank" / "projectbrief.md").write_text("# Brief\n", encoding="utf-8")
             (root / "memory-bank" / "activeContext.md").write_text("# Active\n", encoding="utf-8")
 
+            before = {
+                path.relative_to(root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+                for path in root.rglob("*")
+                if path.is_file()
+            }
+
             report = integration_map.inspect(root)
             names = {item["name"] for item in report["detected_surfaces"]}
+            after = {
+                path.relative_to(root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+                for path in root.rglob("*")
+                if path.is_file()
+            }
 
             self.assertTrue(report["read_only"])
+            self.assertEqual(before, after)
             self.assertIn("AGENTS.md", names)
             self.assertIn("CLAUDE.md", names)
             self.assertIn(".sopify", names)
             self.assertIn("openspec", names)
             self.assertIn("Cline-style memory bank", names)
+            self.assertTrue(
+                all(item["status"] == "observed" and item["evidence"] for item in report["detected_surfaces"])
+            )
             self.assertFalse((root / ".mpmg").exists())
 
     def test_json_output_has_stable_contract(self) -> None:
@@ -39,7 +54,11 @@ class IntegrationMapTests(unittest.TestCase):
             with contextlib.redirect_stdout(output):
                 self.assertEqual(integration_map.main([tmp, "--format", "json"]), 0)
             report = json.loads(output.getvalue())
-            self.assertEqual(report["schema_version"], 1)
+            self.assertEqual(report["schema_version"], "mpmg.integration-map.v1")
+            self.assertEqual(
+                report["scan_scope"],
+                {"target_only": True, "follow_external_links": False},
+            )
             self.assertIn("current_observed_state", report["overlay_contract"])
             self.assertIn("intended_behavior", report["overlay_contract"])
             self.assertTrue(any("does not prove" in item for item in report["limitations"]))
@@ -99,6 +118,32 @@ class IntegrationMapTests(unittest.TestCase):
                 with self.assertRaises(SystemExit):
                     integration_map.main([tmp, "--write", "map.md"])
             self.assertEqual(destination.read_text(encoding="utf-8"), "keep me\n")
+
+    def test_unicode_target_is_supported(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "專案 with space"
+            root.mkdir()
+            (root / "AGENTS.md").write_text("# Instructions\n", encoding="utf-8")
+
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(integration_map.main([str(root), "--format", "json"]), 0)
+            report = json.loads(output.getvalue())
+            self.assertEqual(report["detected_surfaces"][0]["name"], "AGENTS.md")
+
+    def test_external_directory_symlink_is_not_followed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as outside_tmp:
+            root = Path(tmp)
+            outside = Path(outside_tmp)
+            (outside / "AGENTS.md").write_text("# External\n", encoding="utf-8")
+            link = root / "external-link"
+            try:
+                link.symlink_to(outside, target_is_directory=True)
+            except OSError as exc:
+                self.skipTest(f"directory symlinks unavailable: {exc}")
+
+            report = integration_map.inspect(root)
+            self.assertEqual(report["detected_surfaces"], [])
 
 
 if __name__ == "__main__":

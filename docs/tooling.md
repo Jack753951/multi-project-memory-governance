@@ -12,7 +12,9 @@ python scripts/mpmg.py integration-map /path/to/project --format json
 uvx --from git+https://github.com/Jack753951/multi-project-memory-governance.git mpmg integration-map /path/to/project
 ```
 
-By default it writes nothing. `--write` creates only `.mpmg/authority-map.md`; it never edits third-party tool files. Detection is structural, not a claim that any detected content is current or correct.
+By default it writes nothing. `--write` creates only `.mpmg/authority-map.md` (or `.json` with `--format json`); it never edits third-party tool files. Detection is structural, not a claim that any detected content is current or correct.
+
+JSON output uses the versioned contract `mpmg.integration-map.v1`. Each observed surface includes repository-relative evidence paths, but those paths prove only that an artifact signature was observed—not that the tool is active or that the artifact owns semantic authority. The scan is target-local and does not follow external directory links.
 
 ## `scripts/init_governance.py`
 
