@@ -12,6 +12,11 @@ All notable changes are documented here. This project uses human-readable versio
 - Related-work and keyword positioning page for GitHub discoverability.
 - Search-oriented package description and keywords for AI coding agent context hygiene.
 
+### Changed
+
+- Clarified the core method as truth precedence and authority boundaries: where knowledge belongs, which source wins, and when remembered context must be re-verified.
+- Reworked the README opening around the method itself rather than a list of features or search phrases.
+
 ## 0.3.0 - 2026-07-08
 
 ### Added

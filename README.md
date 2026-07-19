@@ -2,28 +2,32 @@
 
 [![CI](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml/badge.svg)](https://github.com/Jack753951/multi-project-memory-governance/actions/workflows/ci.yml)
 
+AI coding agents do not only need more memory. They need a reliable way to decide **what to trust**.
 
-AI coding agents eventually remember the wrong things. They apply rules from another repo, trust stale chat history over live files, ask workers to review without required context, and leave review artifacts with no model/tool/limitation metadata.
+An agent may have live files, old chat history, global memory, project notes, handoff documents, and instructions from another worker available at the same time. The hard problem is not storing all of it. The hard problem is deciding:
 
-This is a project-hygiene, context-hygiene, and authority-boundary kit for long-running AI-assisted development with Claude Code, Codex, Cursor, Hermes, local subagents, `AGENTS.md` / `CLAUDE.md`, Obsidian/project notes, and repo-local handoff files.
+- where each kind of knowledge belongs;
+- which source wins when two sources disagree;
+- when remembered information must be checked against live state;
+- what an external worker must read instead of assuming it inherited context.
 
-It is not a memory database. It helps each project say which layer is allowed to be truth, what external workers must read, how reviews should identify themselves, and how to public-export private workflows without leaking local details.
+Multi-Project Memory Governance (MPMG) is a small, filesystem-native method and toolkit for defining those authority boundaries in long-running AI-assisted projects.
 
-Search phrases this project is designed around: AI coding agent context hygiene, AI agent project hygiene, repo-local memory governance, AGENTS.md context rot, Claude Code handoff, Codex handoff, worker task brief validation, AI review metadata, public export safety for AI workflows, and authority boundaries for long-running AI coding agents.
+> **Core rule:** every important fact should have one authoritative home. Lower-authority memory may help an agent find context, but it must not silently override current instructions, live files, or verified project state.
 
-## The problem
+This prevents concrete failures such as:
 
-AI assistants increasingly work across many repos. If global memory, chat history, and handoff files blur together, projects start to leak into each other:
+- an agent applying rules or phase state from another repository;
+- stale chat history overruling current code and validation output;
+- global memory becoming an outdated project database;
+- a Claude Code, Codex, Cursor, Hermes, or local worker acting without the project context it was expected to read;
+- handoff and review artifacts losing their source, validation, or limitation metadata.
 
-- stale phase logs and run artifacts bias future sessions;
-- security gates from one workspace over-constrain harmless local experiments elsewhere;
-- creative preferences leak into engineering or security work;
-- external workers assume they inherited context they never saw;
-- handoff folders become unreadable dumping grounds;
-- reviews omit which tool/model/limitations produced them;
-- private local paths or account details sneak into public exports.
+This is not a memory database, agent runtime, or replacement for `AGENTS.md` / `CLAUDE.md`. It is a governance layer for the context systems you already use: repo files, handoff documents, project notes or Obsidian, durable agent memory, skills, and session history.
 
-Run the doctor first:
+## Try the boundary checks
+
+Run the read-only doctor first:
 
 ```bash
 python scripts/mpmg.py doctor /path/to/your/project
@@ -39,15 +43,24 @@ python scripts/mpmg.py validate-artifacts examples/agent-chaos-before-after/afte
 
 See `docs/before-after-demo.md` for the walkthrough.
 
-## Core model
+## Core model: which source wins?
 
 ```text
-Global agent memory = compact cross-project signposts and user preferences.
-Repo handoff = current engineering truth, validation state, worker outputs, gates.
-Project notes / Obsidian = long-term strategy, rationale, decisions, reviews.
-Skills = reusable procedures and judgment criteria, not project databases.
-Session search = recall leads that must be verified before use.
+Higher authority
+
+1. Current user / operator instruction
+2. Live repo files, configuration, and current validation output
+3. Verified repo handoff: accepted changes, active queue, and gates
+4. Project notes / Obsidian: long-term rationale and decisions
+5. Global agent memory: compact cross-project signposts and preferences
+6. Session search: recall leads that must be verified
+
+Lower authority
 ```
+
+Higher-authority sources win when layers conflict. Skills sit beside this order: they describe reusable procedures, but do not store current project truth.
+
+The layers are separated to limit stale or cross-project information from gaining decision authority—not merely to organize files.
 
 See `docs/architecture.md` for the diagram and layer contract.
 
